@@ -3,14 +3,13 @@ package lk.dilan.registration.controller;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import lk.dilan.registration.model.StudentInfo;
+import lk.dilan.registration.util.Gender;
+
+import java.util.ArrayList;
 
 public class RegistrationViewController {
 
@@ -42,16 +41,16 @@ public class RegistrationViewController {
     private Label lblGender;
 
     @FXML
-    private ListView<?> lstContacts;
+    private ListView<String> lstContacts;
 
     @FXML
-    private ListView<?> lstModules;
+    private ListView<String> lstModules;
 
     @FXML
-    private ListView<?> lstSelectedModules;
+    private ListView<String> lstSelectedModules;
 
     @FXML
-    private ListView<?> lstStudents;
+    private ListView<StudentInfo> lstStudents;
 
     @FXML
     private RadioButton rdoFemale;
@@ -67,6 +66,32 @@ public class RegistrationViewController {
 
     @FXML
     private TextField txtName;
+    public void initialize(){
+        txtContact.textProperty().addListener((value, previousContact, currentContact) -> {
+            txtContact.getStyleClass().remove("invalid");
+            if (currentContact.isEmpty()) {
+                btnAdd.setDisable(true);
+                return;
+            }
+
+            btnAdd.setDisable(false);
+            currentContact = currentContact.strip();
+
+            if (!(currentContact.length() == 11 &&
+                    isNumber(currentContact.substring(0, 3)) &&
+                    currentContact.charAt(3) == '-' &&
+                    isNumber(currentContact.substring(4)))) {
+                txtContact.getStyleClass().add("invalid");
+                btnAdd.setDisable(true);
+            }
+        });
+    }
+    private boolean isNumber(String input) {
+        for (char c : input.toCharArray()) {
+            if (!Character.isDigit(c)) return false;
+        }
+        return true;
+    }
 
     @FXML
     void btnAddOnAction(ActionEvent event) {
@@ -92,6 +117,7 @@ public class RegistrationViewController {
     void btnNewStudentOnAction(ActionEvent event) {
 
         lstStudents.getSelectionModel().clearSelection();
+        txtId.setText(generateNewStudentId());
         lblGender.setTextFill(Color.BLACK);
 
         txtId.setDisable(false);
@@ -111,7 +137,7 @@ public class RegistrationViewController {
         rdoMale.getToggleGroup().selectToggle(null);
         rdoFemale.getToggleGroup().selectToggle(null);
 
-        ObservableList<String> moduleList = (ObservableList<String>) lstModules.getItems();
+        ObservableList<String> moduleList =lstModules.getItems();
         moduleList.clear();
         moduleList.addAll("In16-S2-CS2812 - Visual Programming","In16-S2-DE2281 - Nutrition and Health","In16-S2-EL1022 - Language Skill Enhancement II","In16-S2-EN1802 - Basic Electronics",
                 "In16-S2-MA1023 - Method of Mathematics","In16-S2-ME1090 - Engineering Drawing & Computer","In16-S2-ME1100 - Mechanics of Materials I","In16-S2-MT1962 - Engineering Skill Development","In16-S2-MT1952 - Engineering Design");
@@ -122,6 +148,16 @@ public class RegistrationViewController {
 
     }
 
+    private String generateNewStudentId() {
+        ObservableList<StudentInfo> studentList = lstStudents.getItems();
+        if (studentList.isEmpty()) return "S160000";
+
+        String lastStudentId = studentList.get(studentList.size() - 1).id;  // S160005 - > 0005 -> 5 + 1 -> 6
+        var newId = Integer.parseInt(lastStudentId.substring(1)) + 1;
+
+        return String.format("S16%04d", newId);
+    }
+
     @FXML
     void btnRemoveOnAction(ActionEvent event) {
 
@@ -129,8 +165,71 @@ public class RegistrationViewController {
 
     @FXML
     void btnSaveOnAction(ActionEvent event) {
+        boolean isDataValid = true;
+        lblGender.setTextFill(Color.BLACK);
+        lstContacts.getStyleClass().remove("invalid");
+        lstSelectedModules.getStyleClass().remove("invalid");
 
-    }
+        String name = txtName.getText();
+
+        if (lstSelectedModules.getItems().size() < 2){
+            isDataValid = false;
+            lstSelectedModules.getStyleClass().add("invalid");
+            lstModules.requestFocus();
+        }
+
+        if (lstContacts.getItems().isEmpty()){
+            isDataValid = false;
+            lstContacts.getStyleClass().add("invalid");
+            txtContact.selectAll();
+            txtContact.requestFocus();
+        }
+
+        if (rdoMale.getToggleGroup().getSelectedToggle() == null) {
+            isDataValid = false;
+            rdoMale.requestFocus();
+            lblGender.setTextFill(Color.RED);
+        }
+
+        if (name.isBlank() || txtName.getStyleClass().contains("invalid")) {
+            isDataValid = false;
+            if (!txtName.getStyleClass().contains("invalid")) txtName.getStyleClass().add("invalid");
+            txtName.selectAll();
+            txtName.requestFocus();
+        }
+
+        if (!isDataValid) return;
+
+        ObservableList<StudentInfo> studentList = lstStudents.getItems();
+
+        /* Business Validation */
+        StudentInfo selectedStudent = lstStudents.getSelectionModel().getSelectedItem();
+
+        for (String enteredContact : lstContacts.getItems()) {
+            for (StudentInfo student : studentList) {
+                if (student == selectedStudent) continue;
+                if (student.contacts.contains(enteredContact)){
+                    new Alert(Alert.AlertType.ERROR,
+                            String.format("Contact number: %s already exists", enteredContact)).showAndWait();
+                    lstContacts.getStyleClass().add("invalid");
+                    lstContacts.requestFocus();
+                    return;
+                }
+            }
+        }
+
+        if (selectedStudent == null) {  // Add
+            StudentInfo student = new StudentInfo(txtId.getText(),
+                    txtName.getText().strip(),
+                    rdoMale.isSelected() ? Gender.MALE : Gender.FEMALE,
+                    new ArrayList<>(lstContacts.getItems()),
+                    new ArrayList<>(lstSelectedModules.getItems()));
+            studentList.add(student);
+        }
+        btnNewStudent.fire();
+
+
+        }
 
     @FXML
     void lstContactsOnKeyReleased(KeyEvent event) {
