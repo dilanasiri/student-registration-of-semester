@@ -66,7 +66,21 @@ public class RegistrationViewController {
 
     @FXML
     private TextField txtName;
-    public void initialize(){
+    public void initialize() {
+        lstModules.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        lstSelectedModules.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        txtName.textProperty().addListener((value, previousText, currentText) -> {
+            txtName.getStyleClass().remove("invalid");
+
+            for (char c : currentText.toCharArray()) {
+                if (!(Character.isLetter(c) || Character.isSpaceChar(c))) {
+                    txtName.getStyleClass().add("invalid");
+                    return;
+                }
+            }
+        });
+
         txtContact.textProperty().addListener((value, previousContact, currentContact) -> {
             txtContact.getStyleClass().remove("invalid");
             if (currentContact.isEmpty()) {
@@ -85,6 +99,45 @@ public class RegistrationViewController {
                 btnAdd.setDisable(true);
             }
         });
+
+        lstContacts.getSelectionModel().selectedItemProperty().addListener((value, previous, current) -> {
+            btnRemove.setDisable(current == null);
+        });
+
+        lstModules.getSelectionModel().selectedItemProperty().addListener((value, previous, current) -> {
+            btnForward.setDisable(current == null);
+        });
+
+        lstSelectedModules.getSelectionModel().selectedItemProperty().addListener((value, previous, current) -> {
+            btnBack.setDisable(current == null);
+        });
+
+        lstStudents.getSelectionModel().selectedItemProperty().addListener((value, previous, current) -> {
+            btnDelete.setDisable(current == null);
+            if (current == null) return;
+
+            txtId.setText(current.id);
+            txtName.setText(current.name);
+            if (current.gender == Gender.MALE){
+                rdoMale.getToggleGroup().selectToggle(rdoMale);
+            }else{
+                rdoFemale.getToggleGroup().selectToggle(rdoFemale);
+            }
+            txtContact.clear();
+            lstContacts.getItems().clear();
+            lstContacts.getItems().addAll(current.contacts);
+            lstSelectedModules.getItems().clear();
+            lstSelectedModules.getItems().addAll(current.modules);
+
+            lstModules.getItems().clear();
+            lstModules.getItems().addAll("In16-S2-CS2812 - Visual Programming","In16-S2-DE2281 - Nutrition and Health","In16-S2-EL1022 - Language Skill Enhancement II","In16-S2-EN1802 - Basic Electronics",
+                    "In16-S2-MA1023 - Method of Mathematics","In16-S2-ME1090 - Engineering Drawing & Computer","In16-S2-ME1100 - Mechanics of Materials I","In16-S2-MT1962 - Engineering Skill Development","In16-S2-MT1952 - Engineering Design");
+            lstModules.getItems().removeAll(current.modules);
+
+            lstContacts.getSelectionModel().clearSelection();
+            lstModules.getSelectionModel().clearSelection();
+            lstSelectedModules.getSelectionModel().clearSelection();
+        });
     }
     private boolean isNumber(String input) {
         for (char c : input.toCharArray()) {
@@ -95,6 +148,18 @@ public class RegistrationViewController {
 
     @FXML
     void btnAddOnAction(ActionEvent event) {
+        for (String contact : lstContacts.getItems()) {
+            if (contact.equals(txtContact.getText().strip())) {
+                txtContact.getStyleClass().add("invalid");
+                return;
+            }
+        }
+
+        lstContacts.getItems().add(txtContact.getText().strip());
+        txtContact.clear();
+        txtContact.requestFocus();
+        lstContacts.getSelectionModel().clearSelection();
+        lstContacts.getStyleClass().remove("invalid");
 
     }
 
@@ -115,10 +180,15 @@ public class RegistrationViewController {
 
     @FXML
     void btnNewStudentOnAction(ActionEvent event) {
-
         lstStudents.getSelectionModel().clearSelection();
+
         txtId.setText(generateNewStudentId());
         lblGender.setTextFill(Color.BLACK);
+
+        txtName.getStyleClass().remove("invalid");
+        txtContact.getStyleClass().remove("invalid");
+        lstContacts.getStyleClass().remove("invalid");
+        lstSelectedModules.getStyleClass().remove("invalid");
 
         txtId.setDisable(false);
         txtName.setDisable(false);
@@ -128,23 +198,24 @@ public class RegistrationViewController {
         lstContacts.setDisable(false);
         lstModules.setDisable(false);
         lstSelectedModules.setDisable(false);
+//        btnForward.setDisable(false);
         btnSave.setDisable(false);
 
         txtName.clear();
         txtContact.clear();
         lstContacts.getItems().clear();
         lstSelectedModules.getItems().clear();
-        rdoMale.getToggleGroup().selectToggle(null);
-        rdoFemale.getToggleGroup().selectToggle(null);
 
-        ObservableList<String> moduleList =lstModules.getItems();
+        ObservableList<String> moduleList = lstModules.getItems();
         moduleList.clear();
         moduleList.addAll("In16-S2-CS2812 - Visual Programming","In16-S2-DE2281 - Nutrition and Health","In16-S2-EL1022 - Language Skill Enhancement II","In16-S2-EN1802 - Basic Electronics",
                 "In16-S2-MA1023 - Method of Mathematics","In16-S2-ME1090 - Engineering Drawing & Computer","In16-S2-ME1100 - Mechanics of Materials I","In16-S2-MT1962 - Engineering Skill Development","In16-S2-MT1952 - Engineering Design");
 
         lstModules.getSelectionModel().clearSelection();
-        txtName.requestFocus();
 
+        rdoMale.getToggleGroup().selectToggle(null);
+
+        txtName.requestFocus();
 
     }
 
@@ -253,7 +324,7 @@ public class RegistrationViewController {
 
     @FXML
     void txtContactOnAction(ActionEvent event) {
-
+        btnAdd.fire();
     }
 
 }
