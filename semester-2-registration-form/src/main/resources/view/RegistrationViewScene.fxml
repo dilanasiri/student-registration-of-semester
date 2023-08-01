@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<AnchorPane minHeight="724.0" minWidth="894.0" prefHeight="756.0" prefWidth="894.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.dilan.registration.controller.RegistrationViewController">
+<AnchorPane minHeight="724.0" minWidth="894.0" prefHeight="756.0" prefWidth="894.0" stylesheets="@../css/RegistrationViewStyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.dilan.registration.controller.RegistrationViewController">
    <children>
       <ListView fx:id="lstStudents" onKeyReleased="#lstStudentsOnKeyReleased" prefHeight="150.0" prefWidth="848.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="541.0" />
       <VBox spacing="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="65.0">
