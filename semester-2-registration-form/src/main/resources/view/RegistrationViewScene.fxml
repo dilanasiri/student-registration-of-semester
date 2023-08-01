@@ -13,13 +13,8 @@
 <?import javafx.scene.text.Font?>
 
 
-<AnchorPane minHeight="724.0" minWidth="894.0" prefHeight="706.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.dilan.registration.controller.RegistrationViewController">
+<AnchorPane minHeight="724.0" minWidth="894.0" prefHeight="756.0" prefWidth="894.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.dilan.registration.controller.RegistrationViewController">
    <children>
-      <Button fx:id="btnNewStudent" mnemonicParsing="false" onAction="#btnNewStudentOnAction" prefHeight="30.0" prefWidth="170.0" text="+ NEW STUDENT" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Button>
       <ListView fx:id="lstStudents" onKeyReleased="#lstStudentsOnKeyReleased" prefHeight="150.0" prefWidth="848.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="541.0" />
       <VBox spacing="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="65.0">
          <children>
@@ -177,5 +172,22 @@
             </HBox>
          </children>
       </VBox>
+      <HBox layoutX="154.0" layoutY="21.0" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="570.0" spacing="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0">
+         <children>
+            <Button fx:id="btnNewStudent" mnemonicParsing="false" onAction="#btnNewStudentOnAction" prefHeight="30.0" prefWidth="170.0" text="+ NEW STUDENT">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+            <Label alignment="CENTER" prefHeight="30.0" prefWidth="680.0" text="Department Of Material Science And Engineering" textFill="#300feb">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets left="5.0" />
+         </padding>
+      </HBox>
    </children>
 </AnchorPane>
