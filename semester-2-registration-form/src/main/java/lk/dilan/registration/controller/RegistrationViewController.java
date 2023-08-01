@@ -1,5 +1,6 @@
 package lk.dilan.registration.controller;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -9,6 +10,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 
 public class RegistrationViewController {
 
@@ -88,6 +90,35 @@ public class RegistrationViewController {
 
     @FXML
     void btnNewStudentOnAction(ActionEvent event) {
+
+        lstStudents.getSelectionModel().clearSelection();
+        lblGender.setTextFill(Color.BLACK);
+
+        txtId.setDisable(false);
+        txtName.setDisable(false);
+        txtContact.setDisable(false);
+        rdoMale.setDisable(false);
+        rdoFemale.setDisable(false);
+        lstContacts.setDisable(false);
+        lstModules.setDisable(false);
+        lstSelectedModules.setDisable(false);
+        btnSave.setDisable(false);
+
+        txtName.clear();
+        txtContact.clear();
+        lstContacts.getItems().clear();
+        lstSelectedModules.getItems().clear();
+        rdoMale.getToggleGroup().selectToggle(null);
+        rdoFemale.getToggleGroup().selectToggle(null);
+
+        ObservableList<String> moduleList = (ObservableList<String>) lstModules.getItems();
+        moduleList.clear();
+        moduleList.addAll("In16-S2-CS2812 - Visual Programming","In16-S2-DE2281 - Nutrition and Health","In16-S2-EL1022 - Language Skill Enhancement II","In16-S2-EN1802 - Basic Electronics",
+                "In16-S2-MA1023 - Method of Mathematics","In16-S2-ME1090 - Engineering Drawing & Computer","In16-S2-ME1100 - Mechanics of Materials I","In16-S2-MT1962 - Engineering Skill Development","In16-S2-MT1952 - Engineering Design");
+
+        lstModules.getSelectionModel().clearSelection();
+        txtName.requestFocus();
+
 
     }
 
