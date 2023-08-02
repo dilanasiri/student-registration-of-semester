@@ -15,6 +15,7 @@ import java.util.Optional;
 
 public class RegistrationViewController {
 
+    public Label lblGender;
     @FXML
     private Button btnAdd;
 
@@ -38,9 +39,6 @@ public class RegistrationViewController {
 
     @FXML
     private ToggleGroup gender;
-
-    @FXML
-    private Label lblGender;
 
     @FXML
     private ListView<String> lstContacts;
@@ -68,6 +66,7 @@ public class RegistrationViewController {
 
     @FXML
     private TextField txtName;
+
     public void initialize() {
         lstModules.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         lstSelectedModules.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -120,11 +119,11 @@ public class RegistrationViewController {
 
             txtId.setText(current.id);
             txtName.setText(current.name);
-            if (current.gender == Gender.MALE){
-                rdoMale.getToggleGroup().selectToggle(rdoMale);
-            }else{
-                rdoFemale.getToggleGroup().selectToggle(rdoFemale);
-            }
+//            if (current.gender == Gender.MALE){
+//                rdoMale.getToggleGroup().selectToggle(rdoMale);
+//            }else{
+//                rdoFemale.getToggleGroup().selectToggle(rdoFemale);
+//            }
             txtContact.clear();
             lstContacts.getItems().clear();
             lstContacts.getItems().addAll(current.contacts);
@@ -134,6 +133,7 @@ public class RegistrationViewController {
             lstModules.getItems().clear();
             lstModules.getItems().addAll("In16-S2-CS2812 - Visual Programming","In16-S2-DE2281 - Nutrition and Health","In16-S2-EL1022 - Language Skill Enhancement II","In16-S2-EN1802 - Basic Electronics",
                     "In16-S2-MA1023 - Method of Mathematics","In16-S2-ME1090 - Engineering Drawing & Computer","In16-S2-ME1100 - Mechanics of Materials I","In16-S2-MT1962 - Engineering Skill Development","In16-S2-MT1952 - Engineering Design");
+
             lstModules.getItems().removeAll(current.modules);
 
             lstContacts.getSelectionModel().clearSelection();
@@ -141,6 +141,7 @@ public class RegistrationViewController {
             lstSelectedModules.getSelectionModel().clearSelection();
         });
     }
+
     private boolean isNumber(String input) {
         for (char c : input.toCharArray()) {
             if (!Character.isDigit(c)) return false;
@@ -162,7 +163,6 @@ public class RegistrationViewController {
         txtContact.requestFocus();
         lstContacts.getSelectionModel().clearSelection();
         lstContacts.getStyleClass().remove("invalid");
-
     }
 
     @FXML
@@ -185,7 +185,6 @@ public class RegistrationViewController {
 
         lstStudents.getItems().remove(lstStudents.getSelectionModel().getSelectedItem());
         btnNewStudent.fire();
-
     }
 
     @FXML
@@ -198,7 +197,6 @@ public class RegistrationViewController {
 
         lstModules.getSelectionModel().clearSelection();
         lstSelectedModules.getStyleClass().remove("invalid");
-
     }
 
     @FXML
@@ -236,20 +234,19 @@ public class RegistrationViewController {
 
         lstModules.getSelectionModel().clearSelection();
 
-        rdoMale.getToggleGroup().selectToggle(null);
+//        rdoMale.getToggleGroup().selectToggle(null);
 
         txtName.requestFocus();
-
     }
 
     private String generateNewStudentId() {
         ObservableList<StudentInfo> studentList = lstStudents.getItems();
-        if (studentList.isEmpty()) return "S160000";
+        if (studentList.isEmpty()) return "S16000";
 
-        String lastStudentId = studentList.get(studentList.size() - 1).id;  // S160005 - > 0005 -> 5 + 1 -> 6
+        String lastStudentId = studentList.get(studentList.size() - 1).id;  // S16005 - > 005 -> 5 + 1 -> 6
         var newId = Integer.parseInt(lastStudentId.substring(1)) + 1;
 
-        return String.format("S16%04d", newId);
+        return String.format("S%03d", newId);
     }
 
     @FXML
@@ -257,7 +254,6 @@ public class RegistrationViewController {
         lstContacts.getItems().remove(lstContacts.getSelectionModel().getSelectedItem());
         lstContacts.getSelectionModel().clearSelection();
         txtContact.requestFocus();
-
     }
 
     @FXML
@@ -281,12 +277,11 @@ public class RegistrationViewController {
             txtContact.selectAll();
             txtContact.requestFocus();
         }
-
-        if (rdoMale.getToggleGroup().getSelectedToggle() == null) {
-            isDataValid = false;
-            rdoMale.requestFocus();
-            lblGender.setTextFill(Color.RED);
-        }
+//        if (rdoMale.getToggleGroup().getSelectedToggle() ==null) {
+//            isDataValid = false;
+//            rdoMale.requestFocus();
+//            lblGender.setTextFill(Color.RED);
+//        }
 
         if (name.isBlank() || txtName.getStyleClass().contains("invalid")) {
             isDataValid = false;
@@ -322,11 +317,17 @@ public class RegistrationViewController {
                     new ArrayList<>(lstContacts.getItems()),
                     new ArrayList<>(lstSelectedModules.getItems()));
             studentList.add(student);
+        }else{  // Update
+            selectedStudent.name = txtName.getText().strip();
+            selectedStudent.gender = rdoMale.isSelected() ? Gender.MALE : Gender.FEMALE;
+            selectedStudent.contacts.clear();
+            selectedStudent.contacts.addAll(new ArrayList<>(lstContacts.getItems()));
+            selectedStudent.modules.clear();
+            selectedStudent.modules.addAll(new ArrayList<>(lstSelectedModules.getItems()));
         }
         btnNewStudent.fire();
 
-
-        }
+    }
 
     @FXML
     void lstContactsOnKeyReleased(KeyEvent event) {
@@ -341,13 +342,11 @@ public class RegistrationViewController {
     @FXML
     void lstSelectedModulesOnKeyReleased(KeyEvent event) {
         if (event.getCode() == KeyCode.DELETE) btnBack.fire();
-
     }
 
     @FXML
     void lstStudentsOnKeyReleased(KeyEvent event) {
         if (event.getCode() == KeyCode.DELETE) btnDelete.fire();
-
     }
 
     @FXML
