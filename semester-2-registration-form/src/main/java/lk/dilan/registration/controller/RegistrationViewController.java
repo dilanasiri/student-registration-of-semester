@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import lk.dilan.registration.model.StudentInfo;
@@ -175,6 +176,14 @@ public class RegistrationViewController {
 
     @FXML
     void btnForwardOnAction(ActionEvent event) {
+        ObservableList<String> modules = lstModules.getItems();
+        ObservableList<String> selectedModules = lstSelectedModules.getItems();
+
+        selectedModules.addAll(lstModules.getSelectionModel().getSelectedItems());
+        modules.removeAll(lstModules.getSelectionModel().getSelectedItems());
+
+        lstModules.getSelectionModel().clearSelection();
+        lstSelectedModules.getStyleClass().remove("invalid");
 
     }
 
@@ -304,21 +313,23 @@ public class RegistrationViewController {
 
     @FXML
     void lstContactsOnKeyReleased(KeyEvent event) {
-
+        if (event.getCode() == KeyCode.DELETE) btnRemove.fire();
     }
 
     @FXML
     void lstModulesOnKeyReleased(KeyEvent event) {
-
+        if (event.getCode() == KeyCode.ENTER) btnForward.fire();
     }
 
     @FXML
     void lstSelectedModulesOnKeyReleased(KeyEvent event) {
+        if (event.getCode() == KeyCode.DELETE) btnBack.fire();
 
     }
 
     @FXML
     void lstStudentsOnKeyReleased(KeyEvent event) {
+        if (event.getCode() == KeyCode.DELETE) btnDelete.fire();
 
     }
 
