@@ -11,6 +11,7 @@ import lk.dilan.registration.model.StudentInfo;
 import lk.dilan.registration.util.Gender;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class RegistrationViewController {
 
@@ -166,11 +167,24 @@ public class RegistrationViewController {
 
     @FXML
     void btnBackOnAction(ActionEvent event) {
+        ObservableList<String> selectedModules = lstSelectedModules.getItems();
+        ObservableList<String> modules = lstModules.getItems();
 
+        modules.addAll(lstSelectedModules.getSelectionModel().getSelectedItems());
+        selectedModules.removeAll(lstSelectedModules.getSelectionModel().getSelectedItems());
+
+        lstSelectedModules.getSelectionModel().clearSelection();
     }
 
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
+        Optional<ButtonType> optButton = new Alert(Alert.AlertType.CONFIRMATION,
+                "Are you sure to delete this student?",
+                ButtonType.YES, ButtonType.NO).showAndWait();
+        if (optButton.isEmpty() || optButton.get() ==  ButtonType.NO) return;
+
+        lstStudents.getItems().remove(lstStudents.getSelectionModel().getSelectedItem());
+        btnNewStudent.fire();
 
     }
 
@@ -240,6 +254,9 @@ public class RegistrationViewController {
 
     @FXML
     void btnRemoveOnAction(ActionEvent event) {
+        lstContacts.getItems().remove(lstContacts.getSelectionModel().getSelectedItem());
+        lstContacts.getSelectionModel().clearSelection();
+        txtContact.requestFocus();
 
     }
 
